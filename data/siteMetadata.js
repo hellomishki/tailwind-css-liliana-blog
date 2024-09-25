@@ -4,7 +4,7 @@ const siteMetadata = {
   author: 'Liliana Summers',
   headerTitle: 'Liliana Summers',
   description:
-    "Where the daylight fades and the rules don’t matter. This is the space for the untamed, the unpolished, and the deeply satisfying chaos of what comes after the clock stops ticking. Whether it's pushing code into strange corners, diving into endless game worlds, or getting lost in tech experiments, after hours is when things get real.",
+    "This is the space for the untamed, the unpolished, and the deeply satisfying chaos of what comes after the clock stops ticking. Whether it's pushing code into strange corners, diving into endless game worlds, or getting lost in tech experiments, after hours is when things get real.",
   language: 'en-au',
   theme: 'system', // system, dark or light
   siteUrl: 'https://blog.lilianasummers.com/',
@@ -12,8 +12,10 @@ const siteMetadata = {
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mishki',
+  bluesky: 'https://bsky.app/profile/lilianasummers.bsky.social',
+  steam: 'https://steamcommunity.com/id/hellomishki',
   email: 'hello@lilianasummers.com.com',
-  github: 'https://github.com/hellomishki',
+  // github: 'https://github.com/hellomishki',
   // x: 'https://twitter.com/x',
   // twitter: 'https://twitter.com/Twitter',
   // facebook: 'https://facebook.com',

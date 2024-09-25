@@ -58,3 +58,11 @@ input:-webkit-autofill:focus {
   display: inline-block;
   vertical-align: middle;
 }
+
+.light-mode-fill {
+  fill: #000; /* Light mode fill color */
+}
+
+.dark-mode-fill {
+  fill: #fff; /* Dark mode fill color */
+}

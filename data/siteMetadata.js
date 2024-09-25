@@ -1,9 +1,10 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Liliana Summers - Blog',
+  title: 'Liliana Summers - After Hours',
   author: 'Liliana Summers',
   headerTitle: 'Liliana Summers',
-  description: 'Personal blog by Liliana Summers. I write about tech, coding, and gaming.',
+  description:
+    "Where the daylight fades and the rules don’t matter. This is the space for the untamed, the unpolished, and the deeply satisfying chaos of what comes after the clock stops ticking. Whether it's pushing code into strange corners, diving into endless game worlds, or getting lost in tech experiments, after hours is when things get real.",
   language: 'en-au',
   theme: 'system', // system, dark or light
   siteUrl: 'https://blog.lilianasummers.com/',
@@ -50,7 +51,7 @@ const siteMetadata = {
   newsletter: {
     // supports mailchimp, buttondown, convertkit, klaviyo, revue, emailoctopus, beehive
     // Please add your .env file and modify it according to your selection
-    provider: 'buttondown',
+    provider: 'emailoctopus',
   },
   comments: {
     // If you want to use an analytics provider you have to add it to the

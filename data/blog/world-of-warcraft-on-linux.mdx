@@ -1,0 +1,56 @@
+---
+title: 'How to Fix Gaming Issues on Pop OS with Hybrid GPUs: My Experience setting up World of Warcraft'
+date: '2024-10-05'
+tags: ['linux', 'guide', 'gaming']
+draft: false
+summary: 'Explore my experience with running World of Warcraft on Pop OS using hybrid GPUs and how switching to Bottles resulted in smoother performance than on Windows.'
+---
+
+Linux distros such as Pop OS and Mint are often recommended to new users looking to make the leap from Windows, as they are supposed to:
+
+- be good for gaming
+- be easy to set up
+- offer an experience comparable to Windows, thus lessening the learning curve.
+
+## But what happens when that is not the case for you, due to hardware, for example?
+
+![Neofetch](/static/images/neofetch.png)
+
+As you can see, I faced a few challenges with my particular setup on my laptop.
+
+The first is that I have both an AMD integrated GPU with my AMD Ryzen 5 and a discrete GPU—the NVIDIA GeForce GTX 1650. Secondly, my HP Pavilion has no advanced BIOS settings available, so I couldn't turn off the AMD integrated GPU.
+
+In theory, I *should* have been able to take advantage of Pop OS' Hybrid Graphics mode, but it did not work as expected for my setup.
+
+For example, I couldn't connect an external HDMI monitor and use it as the single monitor, as it would default to using the iGPU. The input lag when in clamshell mode made it unusable, even with the refresh rate matched.
+
+I could get WoW to run via Lutris, but it also defaulted to the AMD iGPU, which was... not pretty. Forcing it to use the discrete GPU in the Lutris settings resulted in black screens for both Battle.net and WoW.
+
+I tried running WoW as a non-Steam game via Steam and had the same result as Lutris.
+
+After hours of research and trial and error, I finally got WoW running, and dare I say it—better than how it ran on my Windows machine?!
+
+## How did i manage to get it working on my hardware with Pop OS?
+
+First, I had to switch to NVIDIA graphics mode. This immediately fixed the issue with an external monitor, but it still left me unable to play WoW via Lutris.
+
+![Pop OS Graphic Settings](/static/images/pop-os-settings.png)
+
+In the end, Bottles was the winning combination for my system.
+
+It was as simple as 
+1. Downloading Bottles
+2. Setting up a new Bottle for Battle.net
+3. Using the predefined install program for Blizzard Battle.net
+4. Checking my Bottle's settings were all good and using the discreet graphics card
+5. Running the program 
+6. Enjoy playing WoW smoother than it ran on Windows on the same laptop
+
+I was even able to easily install my add-ons with Curseforge by pointing it at the Bottles WoW install path.
+
+![Bottles Battle.net setup](/static/images/bottles-battle-net.png)
+![Bottles Battle.net setup](/static/images/bottles-linux-battle-net.png)
+![Bottles Battle.net setup](/static/images/bottles-linux-battle-net-settings.png)
+![Bottles Battle.net setup](/static/images/world-of-warcraft-pop-os.png)
+
+Now this is one less reason to keep Windows around!

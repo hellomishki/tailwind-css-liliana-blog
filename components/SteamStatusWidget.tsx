@@ -94,7 +94,18 @@ const SteamStatusWidget: React.FC = () => {
   })
 
   useEffect(() => {
-    console.log('Steam widget updated:', { steamData, loading, lastUpdated })
+    if (process.env.NODE_ENV === 'production') {
+      // Log to Vercel in production
+      console.error(
+        JSON.stringify({
+          message: 'Steam widget updated',
+          data: { steamData, loading, lastUpdated },
+        })
+      )
+    } else {
+      // Use console.log in development
+      console.log('Steam widget updated:', { steamData, loading, lastUpdated })
+    }
   }, [steamData, loading, lastUpdated])
 
   if (loading) {

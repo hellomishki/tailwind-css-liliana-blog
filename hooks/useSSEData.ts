@@ -12,6 +12,15 @@ interface SSEHookResult<T> {
   lastUpdated: Date | null
 }
 
+// Helper function for logging
+const log = (message: string, data?: unknown) => {
+  if (process.env.NODE_ENV === 'production') {
+    console.error(JSON.stringify({ message, data }))
+  } else {
+    console.log(message, data)
+  }
+}
+
 export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResult<T> {
   const [data, setData] = useState<T | null>(initialData)
   const [loading, setLoading] = useState<boolean>(true)
@@ -22,8 +31,19 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
   const eventSourceRef = useRef<EventSource | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  const reconnect = useCallback(() => {
+    log('Attempting to reconnect...')
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current)
+    }
+    reconnectTimeoutRef.current = setTimeout(() => {
+      setConnectionStatus('reconnecting')
+      setupEventSource()
+    }, 5000)
+  }, []) // Empty dependency array as it doesn't use any external variables
+
   const setupEventSource = useCallback(() => {
-    console.log('Setting up EventSource')
+    log('Setting up EventSource')
     if (eventSourceRef.current) {
       eventSourceRef.current.close()
     }
@@ -32,15 +52,14 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
     eventSourceRef.current = eventSource
 
     eventSource.onopen = () => {
-      console.log('EventSource connection opened')
+      log('EventSource connection opened')
       setConnectionStatus('connected')
     }
 
     eventSource.onmessage = (event) => {
-      console.log('Received SSE message:', event.data)
       try {
         if (event.data === 'ping') {
-          console.log('Received ping')
+          // Silently handle ping messages
           return
         }
         const newData = JSON.parse(event.data) as T
@@ -49,37 +68,25 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
         setLoading(false)
         setConnectionStatus('connected')
       } catch (error) {
-        console.error('Error parsing SSE data:', error)
+        log('Error parsing SSE data:', error)
       }
     }
 
     eventSource.onerror = (error) => {
-      console.error('EventSource error:', error)
+      log('EventSource error:', error)
       setConnectionStatus('error')
       eventSource.close()
-      // Use the reconnect function from the outer scope
       reconnect()
     }
 
     return eventSource
-  }, [url]) // Remove reconnect from dependencies
-
-  const reconnect = useCallback(() => {
-    console.log('Attempting to reconnect...')
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current)
-    }
-    reconnectTimeoutRef.current = setTimeout(() => {
-      setConnectionStatus('reconnecting')
-      setupEventSource()
-    }, 5000)
-  }, [setupEventSource]) // Add setupEventSource as a dependency
+  }, [url, reconnect])
 
   useEffect(() => {
     const eventSource = setupEventSource()
 
     return () => {
-      console.log('Cleaning up EventSource')
+      log('Cleaning up EventSource')
       if (eventSourceRef.current) {
         eventSourceRef.current.close()
       }

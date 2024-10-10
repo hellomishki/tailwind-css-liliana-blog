@@ -56,11 +56,21 @@ const SpotifyStatusWidget: React.FC = () => {
 
       eventSource.onmessage = (event) => {
         console.log('Received SSE update:', event.data)
-        const data = JSON.parse(event.data)
-        setSpotifyData(data)
-        setLastUpdated(new Date())
-        setLoading(false)
-        setError(null)
+        try {
+          const data = JSON.parse(event.data)
+          if (data.error) {
+            setError(data.error)
+            console.error('Error in SSE update:', data)
+          } else {
+            setSpotifyData(data)
+            setLastUpdated(new Date())
+            setLoading(false)
+            setError(null)
+          }
+        } catch (error) {
+          console.error('Error parsing SSE data:', error)
+          setError(`Error parsing server data: ${event.data}`)
+        }
       }
 
       eventSource.onerror = (error) => {

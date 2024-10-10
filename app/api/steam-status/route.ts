@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 
-export const runtime = 'edge'
+// Commenting out the Edge Runtime for now
+// export const runtime = 'edge'
 
 interface GameDetails {
   header_image?: string
@@ -18,8 +19,15 @@ interface GameInfo {
 
 async function fetchGameDetails(appId: string): Promise<GameDetails | null> {
   const response = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}`)
-  const data = await response.json()
-  return data[appId].success ? data[appId].data : null
+  const text = await response.text() // Get the raw text of the response
+  console.log(`Raw response for appId ${appId}:`, text) // Log the raw response
+  try {
+    const data = JSON.parse(text)
+    return data[appId].success ? data[appId].data : null
+  } catch (error) {
+    console.error(`Error parsing JSON for appId ${appId}:`, error)
+    throw new Error(`Invalid JSON response for appId ${appId}: ${text.substring(0, 100)}...`)
+  }
 }
 
 async function fetchSteamData() {
@@ -27,6 +35,7 @@ async function fetchSteamData() {
   const STEAM_ID = process.env.STEAM_ID
 
   if (!STEAM_API_KEY || !STEAM_ID) {
+    console.error('Missing STEAM_API_KEY or STEAM_ID')
     throw new Error('Steam API key or Steam ID not configured')
   }
 
@@ -41,10 +50,23 @@ async function fetchSteamData() {
   })
 
   if (!summaryResponse.ok) {
-    throw new Error(`Steam API responded with status: ${summaryResponse.status}`)
+    const errorText = await summaryResponse.text()
+    console.error(`Steam API error response:`, errorText)
+    throw new Error(
+      `Steam API responded with status: ${summaryResponse.status}. Response: ${errorText.substring(0, 100)}...`
+    )
   }
 
-  const summaryData = await summaryResponse.json()
+  const summaryText = await summaryResponse.text()
+  console.log('Raw summary response:', summaryText)
+
+  let summaryData
+  try {
+    summaryData = JSON.parse(summaryText)
+  } catch (error) {
+    console.error('Error parsing summary JSON:', error)
+    throw new Error(`Invalid JSON in summary response: ${summaryText.substring(0, 100)}...`)
+  }
 
   if (
     !summaryData.response ||
@@ -61,10 +83,24 @@ async function fetchSteamData() {
   const ownedGamesResponse = await fetch(ownedGamesUrl, { cache: 'no-store' })
 
   if (!ownedGamesResponse.ok) {
-    throw new Error(`Steam API responded with status: ${ownedGamesResponse.status}`)
+    const errorText = await ownedGamesResponse.text()
+    console.error(`Steam API error response for owned games:`, errorText)
+    throw new Error(
+      `Steam API responded with status: ${ownedGamesResponse.status} for owned games. Response: ${errorText.substring(0, 100)}...`
+    )
   }
 
-  const ownedGamesData = await ownedGamesResponse.json()
+  const ownedGamesText = await ownedGamesResponse.text()
+  console.log('Raw owned games response:', ownedGamesText)
+
+  let ownedGamesData
+  try {
+    ownedGamesData = JSON.parse(ownedGamesText)
+  } catch (error) {
+    console.error('Error parsing owned games JSON:', error)
+    throw new Error(`Invalid JSON in owned games response: ${ownedGamesText.substring(0, 100)}...`)
+  }
+
   const ownedGames = ownedGamesData.response.games || []
   ownedGames.sort((a, b) => b.rtime_last_played - a.rtime_last_played)
 
@@ -112,7 +148,7 @@ async function fetchSteamData() {
         : null,
   }
 
-  // console.log('Fetched Steam data:', JSON.stringify(result))
+  console.log('Fetched Steam data:', JSON.stringify(result))
   return result
 }
 
@@ -132,7 +168,13 @@ export async function GET(request: NextRequest) {
           } catch (error) {
             console.error('Error fetching Steam data:', error)
             controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ error: 'Error fetching Steam data' })}\n\n`)
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  error: `Error fetching Steam data: ${error.message}`,
+                  rawError: error.toString(),
+                  stack: error.stack,
+                })}\n\n`
+              )
             )
           }
           await new Promise((resolve) => setTimeout(resolve, 30000)) // Update every 30 seconds
@@ -157,11 +199,18 @@ export async function GET(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
       })
     } catch (error) {
-      console.error('Error fetching Steam data:', error)
-      return new Response(JSON.stringify({ error: 'Error fetching Steam data' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      console.error('Error in GET handler:', error)
+      return new Response(
+        JSON.stringify({
+          error: `Error fetching Steam data: ${error.message}`,
+          rawError: error.toString(),
+          stack: error.stack,
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
     }
   }
 }

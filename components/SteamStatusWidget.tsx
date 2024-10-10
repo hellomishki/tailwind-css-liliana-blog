@@ -92,15 +92,25 @@ const SteamStatusWidget: React.FC = () => {
     let eventSource: EventSource | null = null
 
     const setupEventSource = () => {
-      eventSource = new EventSource('/api/steam-status?sse=true')
+      eventSource = new EventSource('https://blog.lilianasummers.com/api/steam-status?sse=true')
 
       eventSource.onmessage = (event) => {
         console.log('Received SSE update:', event.data)
-        const data = JSON.parse(event.data)
-        setSteamData(data)
-        setLastUpdated(new Date())
-        setLoading(false)
-        setError(null)
+        try {
+          const data = JSON.parse(event.data)
+          if (data.error) {
+            setError(data.error)
+            console.error('Error in SSE update:', data)
+          } else {
+            setSteamData(data)
+            setLastUpdated(new Date())
+            setLoading(false)
+            setError(null)
+          }
+        } catch (error) {
+          console.error('Error parsing SSE data:', error)
+          setError('Error parsing server data')
+        }
       }
 
       eventSource.onerror = (error) => {

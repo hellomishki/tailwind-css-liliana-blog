@@ -21,21 +21,34 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   const setupEventSource = useCallback(() => {
+    console.log('Setting up EventSource')
     const eventSource = new EventSource(url)
 
+    eventSource.onopen = () => {
+      console.log('EventSource connection opened')
+      setConnectionStatus('connected')
+    }
+
     eventSource.onmessage = (event) => {
+      console.log('Received SSE message:', event.data)
       try {
+        if (event.data === 'ping') {
+          console.log('Received ping')
+          return
+        }
         const newData = JSON.parse(event.data) as T
         setData(newData)
         setLastUpdated(new Date())
         setLoading(false)
         setConnectionStatus('connected')
       } catch (error) {
+        console.error('Error parsing SSE data:', error)
         setConnectionStatus('error')
       }
     }
 
-    eventSource.onerror = () => {
+    eventSource.onerror = (error) => {
+      console.error('EventSource error:', error)
       setConnectionStatus('error')
       eventSource.close()
     }
@@ -45,7 +58,6 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
 
   useEffect(() => {
     let eventSource: EventSource | null = null
-    const retryTimeout: NodeJS.Timeout | null = null
 
     const connect = () => {
       if (eventSource) {
@@ -59,10 +71,8 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
 
     return () => {
       if (eventSource) {
+        console.log('Closing EventSource connection')
         eventSource.close()
-      }
-      if (retryTimeout) {
-        clearTimeout(retryTimeout)
       }
     }
   }, [setupEventSource])
@@ -71,6 +81,7 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
     let retryTimeout: NodeJS.Timeout | null = null
 
     if (connectionStatus === 'error') {
+      console.log('Connection error, retrying in 5 seconds')
       retryTimeout = setTimeout(() => {
         setConnectionStatus('reconnecting')
       }, 5000) // Retry after 5 seconds

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const scopes = ['user-read-currently-playing', 'user-read-recently-played']
-const redirectUri = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:3000/api/spotify/callback';
+const redirectUri = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:3000/api/spotify/callback'
 
 export async function GET() {
   const params = new URLSearchParams({

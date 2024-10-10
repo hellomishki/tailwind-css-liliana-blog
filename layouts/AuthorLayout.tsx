@@ -43,9 +43,9 @@ export default function AuthorLayout({ children, content }: Props) {
             </div>
           </div>
         </div>
-        <div className='custom-widgets'>
-        <SteamStatusWidget />
-        <SpotifyStatusWidget />
+        <div className="custom-widgets">
+          <SteamStatusWidget />
+          <SpotifyStatusWidget />
         </div>
       </div>
     </>

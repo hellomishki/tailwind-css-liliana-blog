@@ -166,7 +166,7 @@ const SteamStatusWidget: React.FC = () => {
   }
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-800 steam-widget">
+    <div className="steam-widget rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
       <h3 className="mb-4 inline-flex text-lg font-semibold">
         <SocialIcon kind="steam" href={siteMetadata.steam} />
         <span className="ml-2">Status</span>

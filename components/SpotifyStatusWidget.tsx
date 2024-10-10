@@ -102,8 +102,8 @@ const SpotifyStatusWidget: React.FC = () => {
         <SocialIcon kind="spotify" href={siteMetadata.spotify} />
         <span className="ml-2">Now Playing</span>
       </h3>
-      <div className="flex flex-col now-playing">
-        <div className='flex flex-col items-center mb-1'>
+      <div className="now-playing flex flex-col">
+        <div className="mb-1 flex flex-col items-center">
           <Image
             src={spotifyData.albumArt}
             alt={spotifyData.album}
@@ -122,7 +122,7 @@ const SpotifyStatusWidget: React.FC = () => {
             {spotifyData.name}
           </a>
           <p className="text-sm text-gray-600 dark:text-gray-300">{spotifyData.artist}</p>
-          <p className="text-xs text-gray-500 mt-1">{spotifyData.album}</p>
+          <p className="mt-1 text-xs text-gray-500">{spotifyData.album}</p>
           {!spotifyData.isPlaying && spotifyData.lastPlayedAt && (
             <p className="text-xs text-gray-500">
               Last played: {formatLastPlayedDate(spotifyData.lastPlayedAt)}

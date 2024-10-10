@@ -4,7 +4,6 @@ export const runtime = 'edge'
 
 interface GameDetails {
   header_image?: string
-  // Add other properties that might be returned by the Steam API
 }
 
 interface GameInfo {

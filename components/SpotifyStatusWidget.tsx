@@ -53,15 +53,40 @@ const SpotifyStatusWidget: React.FC = () => {
     initialData: null,
   })
 
-  if (loading) {
-    return (
-      <div className="animate-pulse rounded-lg bg-gray-200 p-4 dark:bg-gray-700">Loading...</div>
-    )
-  }
-
-  if (!spotifyData) {
-    return null // To do: return a fallback UI here
-  }
+  const renderContent = (data: SpotifyData | null, isLoading: boolean) => (
+    <div className={`now-playing flex flex-col ${isLoading ? 'opacity-50' : ''}`}>
+      <div className="mb-1 flex flex-col items-center">
+        {data?.albumArt && (
+          <Image
+            src={data.albumArt}
+            alt={data.album}
+            width={185}
+            height={100}
+            className="rounded-md"
+          />
+        )}
+      </div>
+      <div>
+        {data?.name && (
+          <a
+            href={data.spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-primary-500 hover:underline"
+          >
+            {data.name}
+          </a>
+        )}
+        {data?.artist && <p className="text-sm text-gray-600 dark:text-gray-300">{data.artist}</p>}
+        {data?.album && <p className="mt-1 text-xs text-gray-500">{data.album}</p>}
+        {!data?.isPlaying && data?.lastPlayedAt && (
+          <p className="text-xs text-gray-500">
+            Last played: {formatLastPlayedDate(data.lastPlayedAt)}
+          </p>
+        )}
+      </div>
+    </div>
+  )
 
   return (
     <div className="spotify-widget rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
@@ -69,34 +94,7 @@ const SpotifyStatusWidget: React.FC = () => {
         <SocialIcon kind="spotify" href={siteMetadata.spotify} />
         <span className="ml-2">Now Playing</span>
       </h3>
-      <div className="now-playing flex flex-col">
-        <div className="mb-1 flex flex-col items-center">
-          <Image
-            src={spotifyData.albumArt}
-            alt={spotifyData.album}
-            width={185}
-            height={100}
-            className="rounded-md"
-          />
-        </div>
-        <div>
-          <a
-            href={spotifyData.spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-primary-500 hover:underline"
-          >
-            {spotifyData.name}
-          </a>
-          <p className="text-sm text-gray-600 dark:text-gray-300">{spotifyData.artist}</p>
-          <p className="mt-1 text-xs text-gray-500">{spotifyData.album}</p>
-          {!spotifyData.isPlaying && spotifyData.lastPlayedAt && (
-            <p className="text-xs text-gray-500">
-              Last played: {formatLastPlayedDate(spotifyData.lastPlayedAt)}
-            </p>
-          )}
-        </div>
-      </div>
+      {renderContent(spotifyData, loading)}
       {lastUpdated && (
         <p className="mt-4 text-right text-xs text-gray-500">
           Last updated: {formatLastPlayedDate(lastUpdated.toISOString())}

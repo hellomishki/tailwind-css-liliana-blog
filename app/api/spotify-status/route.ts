@@ -32,6 +32,20 @@ interface RecentlyPlayedResponse {
   items: RecentlyPlayedItem[]
 }
 
+interface CachedSpotifyData {
+  isPlaying: boolean
+  name: string
+  artist: string
+  album: string
+  albumArt: string
+  spotifyUrl: string
+  lastPlayedAt?: string
+}
+
+let cachedData: CachedSpotifyData | null = null
+let lastFetchTime = 0
+const CACHE_DURATION = 60 * 1000 // 1 minute in milliseconds
+
 async function refreshAccessToken() {
   const response = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
@@ -53,7 +67,7 @@ async function refreshAccessToken() {
   return data.access_token
 }
 
-async function fetchSpotifyData(accessToken: string) {
+async function fetchSpotifyData(accessToken: string): Promise<CachedSpotifyData> {
   const currentTrackResponse = await fetch(
     'https://api.spotify.com/v1/me/player/currently-playing',
     {
@@ -99,27 +113,48 @@ async function fetchSpotifyData(accessToken: string) {
   }
 }
 
+async function getSpotifyData(): Promise<CachedSpotifyData> {
+  const now = Date.now()
+  if (cachedData && now - lastFetchTime < CACHE_DURATION) {
+    return cachedData
+  }
+
+  const accessToken = await refreshAccessToken()
+  const freshData = await fetchSpotifyData(accessToken)
+
+  cachedData = freshData
+  lastFetchTime = now
+
+  return freshData
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const sse = searchParams.get('sse')
 
   if (sse === 'true') {
     const encoder = new TextEncoder()
+    let isActive = true // Flag to control the loop
+
     const stream = new ReadableStream({
       async start(controller) {
-        let counter = 0
-        const isActive = true
+        // Send initial data immediately
+        const initialData = await getSpotifyData()
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(initialData)}\n\n`))
+
         while (isActive) {
           try {
-            if (counter % 2 === 0) {
-              // Send ping every minute
-              controller.enqueue(encoder.encode(`data: ping\n\n`))
-            } else {
-              const accessToken = await refreshAccessToken()
-              const data = await fetchSpotifyData(accessToken)
-              console.log('Sending SSE update:', data)
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
-            }
+            // Wait 30 seconds before the next update
+            await new Promise((resolve) => setTimeout(resolve, 30000))
+
+            // Send a ping to keep the connection alive
+            controller.enqueue(encoder.encode(`data: ping\n\n`))
+
+            // Wait another 30 seconds before fetching new data
+            await new Promise((resolve) => setTimeout(resolve, 30000))
+
+            const data = await getSpotifyData()
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
           } catch (error) {
             console.error('Error fetching Spotify data:', error)
             controller.enqueue(
@@ -128,11 +163,10 @@ export async function GET(request: NextRequest) {
               )
             )
           }
-          await new Promise((resolve) => setTimeout(resolve, 30000)) // Update every 30 seconds
-          counter++
         }
       },
       cancel() {
+        isActive = false
         console.log('SSE connection closed')
       },
     })
@@ -146,8 +180,7 @@ export async function GET(request: NextRequest) {
     })
   } else {
     try {
-      const accessToken = await refreshAccessToken()
-      const data = await fetchSpotifyData(accessToken)
+      const data = await getSpotifyData()
       return new Response(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' },
       })

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import Image from 'next/image'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import { useSSEData } from '@/hooks/useSSEData'
+import { useSSEData } from '../hooks/useSSEData'
 
 interface SpotifyData {
   isPlaying: boolean
@@ -55,23 +55,7 @@ const SpotifyStatusWidget: React.FC = () => {
   })
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      // Log to Vercel in production
-      console.error(
-        JSON.stringify({
-          message: 'Spotify widget updated',
-          data: { spotifyData, loading, connectionStatus, lastUpdated },
-        })
-      )
-    } else {
-      // Use console.log in development
-      console.log('Spotify widget updated:', {
-        spotifyData,
-        loading,
-        connectionStatus,
-        lastUpdated,
-      })
-    }
+    console.log('Spotify widget updated:', { spotifyData, loading, connectionStatus, lastUpdated })
   }, [spotifyData, loading, connectionStatus, lastUpdated])
 
   if (loading && !spotifyData) {

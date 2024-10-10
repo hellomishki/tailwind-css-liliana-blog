@@ -15,6 +15,7 @@ const siteMetadata = {
   bluesky: 'https://bsky.app/profile/lilianasummers.bsky.social',
   steam: 'https://steamcommunity.com/id/hellomishki',
   email: 'hello@lilianasummers.com.com',
+  spotify: 'https://open.spotify.com/user/1230934361?si=f2425b222caf414a',
   // github: 'https://github.com/hellomishki',
   // x: 'https://twitter.com/x',
   // twitter: 'https://twitter.com/Twitter',

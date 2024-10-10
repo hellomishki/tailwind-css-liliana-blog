@@ -2419,12 +2419,12 @@ __metadata:
   linkType: hard
 
 "@grpc/grpc-js@npm:^1.7.1":
-  version: 1.12.0
-  resolution: "@grpc/grpc-js@npm:1.12.0"
+  version: 1.12.2
+  resolution: "@grpc/grpc-js@npm:1.12.2"
   dependencies:
     "@grpc/proto-loader": ^0.7.13
     "@js-sdsl/ordered-map": ^4.4.2
-  checksum: 5ae4b52b08c176d38ce4c9d456bfd12740c5f2eff3e5190c03a053c87347848be2c14690ee3dda6d62da41b6652536e3d8a54f65f30bb64bec533e9899b5ac5d
+  checksum: ee51317f92ec5331931b68bf3a4e485a6f7a715609b8aaa29573b3a2b211d5f37c48cda084e25e2bf21142925f8ec9ca49a9e613cbbe06b73785150825d171df
   languageName: node
   linkType: hard
 
@@ -2577,11 +2577,11 @@ __metadata:
   linkType: hard
 
 "@jsonjoy.com/util@npm:^1.1.2, @jsonjoy.com/util@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@jsonjoy.com/util@npm:1.3.0"
+  version: 1.5.0
+  resolution: "@jsonjoy.com/util@npm:1.5.0"
   peerDependencies:
     tslib: 2
-  checksum: a805ca7cf5fc05c6244324a955d96a28797fb8efd60cf22a809a57059de78e4367c72ffb367c82a7ea6ce5622e56f9c696393c5561fbac0fd3c9dc1534d62968
+  checksum: 62892928e1223798e3d910be8dde4fdceaddf2ebdd4bdc0c50495b8ee33503317adf7b5118cd8f5a63045e3f232d70e95fb0279828caf1ec392ffeeb7ea129b8
   languageName: node
   linkType: hard
 
@@ -3548,11 +3548,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:>=13.7.0":
-  version: 22.7.4
-  resolution: "@types/node@npm:22.7.4"
+  version: 22.7.5
+  resolution: "@types/node@npm:22.7.5"
   dependencies:
     undici-types: ~6.19.2
-  checksum: a3f4154147639369aed08fe6f8d62eff637cf87b187bb252d7bbccdc82884626007af424b08a653c53f2182adfa0340001b4888cb7cbb942cef351210fc742a5
+  checksum: 1a8bbb504efaffcef7b8491074a428e5c0b5425b0c0ffb13e7262cb8462c275e8cc5eaf90a38d8fbf52a1eeda7c01ab3b940673c43fc2414140779c973e40ec6
   languageName: node
   linkType: hard
 
@@ -5231,9 +5231,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.28":
-  version: 1.5.32
-  resolution: "electron-to-chromium@npm:1.5.32"
-  checksum: ff75702fe4e62a23b80cd74db0fb29db60d1424716b1755fb79ffe01d214a2d3dc74bb27355b8e41994e3b6e24f3b57b46a060ea510afa3d1b6711fbf4b76219
+  version: 1.5.35
+  resolution: "electron-to-chromium@npm:1.5.35"
+  checksum: 7eca311ebce5ca5bbef7854becc7c84ea213edc8d0d02dedf998cd695e32e5bffb9803846a9a1801f29ce8f31d6b165c9d319e76923f93c2855fae80846f7610
   languageName: node
   linkType: hard
 
@@ -5388,8 +5388,8 @@ __metadata:
   linkType: hard
 
 "es-iterator-helpers@npm:^1.0.19":
-  version: 1.0.19
-  resolution: "es-iterator-helpers@npm:1.0.19"
+  version: 1.1.0
+  resolution: "es-iterator-helpers@npm:1.1.0"
   dependencies:
     call-bind: ^1.0.7
     define-properties: ^1.2.1
@@ -5398,14 +5398,14 @@ __metadata:
     es-set-tostringtag: ^2.0.3
     function-bind: ^1.1.2
     get-intrinsic: ^1.2.4
-    globalthis: ^1.0.3
+    globalthis: ^1.0.4
     has-property-descriptors: ^1.0.2
     has-proto: ^1.0.3
     has-symbols: ^1.0.3
     internal-slot: ^1.0.7
-    iterator.prototype: ^1.1.2
+    iterator.prototype: ^1.1.3
     safe-array-concat: ^1.1.2
-  checksum: 7ae112b88359fbaf4b9d7d1d1358ae57c5138768c57ba3a8fb930393662653b0512bfd7917c15890d1471577fb012fee8b73b4465e59b331739e6ee94f961683
+  checksum: 4ba3a32ab7ba05b85f0ae30604feeb8ffd801fe762e9df9577bd220a96b9eaa2e90af8e6bdc498e523051f293955e2f7d2bddd34de71e1428a1b8ff3fd961016
   languageName: node
   linkType: hard
 
@@ -6464,7 +6464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globalthis@npm:^1.0.3":
+"globalthis@npm:^1.0.3, globalthis@npm:^1.0.4":
   version: 1.0.4
   resolution: "globalthis@npm:1.0.4"
   dependencies:
@@ -7522,16 +7522,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iterator.prototype@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "iterator.prototype@npm:1.1.2"
+"iterator.prototype@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "iterator.prototype@npm:1.1.3"
   dependencies:
     define-properties: ^1.2.1
     get-intrinsic: ^1.2.1
     has-symbols: ^1.0.3
     reflect.getprototypeof: ^1.0.4
     set-function-name: ^2.0.1
-  checksum: d8a507e2ccdc2ce762e8a1d3f4438c5669160ac72b88b648e59a688eec6bc4e64b22338e74000518418d9e693faf2a092d2af21b9ec7dbf7763b037a54701168
+  checksum: 7d2a1f8bcbba7b76f72e956faaf7b25405f4de54430c9d099992e6fb9d571717c3044604e8cdfb8e624cb881337d648030ee8b1541d544af8b338835e3f47ebe
   languageName: node
   linkType: hard
 
@@ -7813,33 +7813,33 @@ __metadata:
   linkType: hard
 
 "lit-element@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "lit-element@npm:4.1.0"
+  version: 4.1.1
+  resolution: "lit-element@npm:4.1.1"
   dependencies:
     "@lit-labs/ssr-dom-shim": ^1.2.0
     "@lit/reactive-element": ^2.0.4
     lit-html: ^3.2.0
-  checksum: 16cc7e343fc7f872a0f6a468bb9d7f3697cd9c3c020fd66e1f29f81e15300dc8d091559a1fd2d4cb6f2eb99b76e3fbeea1991f74dd5ca77bfaadb5b6af3d85b3
+  checksum: 74d0f2d6fb784b1e96f27c54d036b6eb49ca9883577db627ce9ca42b242c5a5da3ae7b5c874fe2a0559ee6134726a741ec2166a48bfee90ab91346a237f33e85
   languageName: node
   linkType: hard
 
 "lit-html@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "lit-html@npm:3.2.0"
+  version: 3.2.1
+  resolution: "lit-html@npm:3.2.1"
   dependencies:
     "@types/trusted-types": ^2.0.2
-  checksum: fa566878efab2492f2dc359216bc5ccd5164466f6760984b9f9b7122c4932be19891ddf10a611bc88718e59c49f83f18e9b9e32fe193dcdc37df28f9fe05630c
+  checksum: 1bacd9f8b2acfe44a989c09c21f1aedbe409409196eff8d203c952c7ad034899b16d239551efa76872a3cea21883db62a5309aeefc604a1e3d4a8d36c9719e63
   languageName: node
   linkType: hard
 
 "lit@npm:^3.1.2":
-  version: 3.2.0
-  resolution: "lit@npm:3.2.0"
+  version: 3.2.1
+  resolution: "lit@npm:3.2.1"
   dependencies:
     "@lit/reactive-element": ^2.0.4
     lit-element: ^4.1.0
     lit-html: ^3.2.0
-  checksum: b34e667481e1360f9d99a939e00238c1aff5ba9ffc43ebcb0e9f24db6c8226cf6f5c3e2b0e7c1a8de70e28e4697059c25742d0744377f0d5037b876b25266898
+  checksum: ee22bbc53d5d639258b4a3a3d10f166adf959fd4ddb61db739d0a8328d0094a2232ffebb808fec3a645aeb166b15c03c688f75dde723524bf7b22263e078158f
   languageName: node
   linkType: hard
 
@@ -8269,14 +8269,14 @@ __metadata:
   linkType: hard
 
 "memfs@npm:^4.8.2":
-  version: 4.12.0
-  resolution: "memfs@npm:4.12.0"
+  version: 4.13.0
+  resolution: "memfs@npm:4.13.0"
   dependencies:
     "@jsonjoy.com/json-pack": ^1.0.3
     "@jsonjoy.com/util": ^1.3.0
     tree-dump: ^1.0.1
     tslib: ^2.0.0
-  checksum: f05b9c32d1fb25038ecadb99527e483b5f2e592f0360c393e6bc95c4e5be95d4c714a7a3f91bff21e610352b44631aede521604596e621132c695749b8dcedbc
+  checksum: 8eb8113f6623e6147bfd19ee2208b959cbab0b87781e97a6ddcc596d185cf4c3560d4a2521b77fb9aed0a15ffe9b893a299ea4fe6f659bf84dedc1299c6d3d51
   languageName: node
   linkType: hard
 
@@ -11392,12 +11392,12 @@ __metadata:
   linkType: hard
 
 "synckit@npm:^0.9.1":
-  version: 0.9.1
-  resolution: "synckit@npm:0.9.1"
+  version: 0.9.2
+  resolution: "synckit@npm:0.9.2"
   dependencies:
     "@pkgr/core": ^0.1.0
     tslib: ^2.6.2
-  checksum: 4042941a4d939675f1d7b01124b8405b6ac616f3e3f396d00e46c67f38d0d5b7f9a1de05bc7ceea4ce80d967b450cfa2460e5f6aca81f7cea8f1a28be9392985
+  checksum: 3a30e828efbdcf3b50fccab4da6e90ea7ca24d8c5c2ad3ffe98e07d7c492df121e0f75227c6e510f96f976aae76f1fa4710cb7b1d69db881caf66ef9de89360e
   languageName: node
   linkType: hard
 
@@ -11753,22 +11753,22 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^5.1.3":
-  version: 5.6.2
-  resolution: "typescript@npm:5.6.2"
+  version: 5.6.3
+  resolution: "typescript@npm:5.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 48777e1dabd9044519f56cd012b0296e3b72bafe12b7e8e34222751d45c67e0eba5387ecdaa6c14a53871a29361127798df6dc8d1d35643a0a47cb0b1c65a33a
+  checksum: ba302f8822777ebefb28b554105f3e074466b671e7444ec6b75dadc008a62f46f373d9e57ceced1c433756d06c8b7dc569a7eefdf3a9573122a49205ff99021a
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>":
-  version: 5.6.2
-  resolution: "typescript@patch:typescript@npm%3A5.6.2#~builtin<compat/typescript>::version=5.6.2&hash=14eedb"
+  version: 5.6.3
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#~builtin<compat/typescript>::version=5.6.3&hash=14eedb"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: c084ee1ab865f108c787e6233a5f63c126c482c0c8e87ec998ac5288a2ad54b603e1ea8b8b272355823b833eb31b9fabb99e8c6152283e1cb47e3a76bd6faf6c
+  checksum: ade87bce2363ee963eed0e4ca8a312ea02c81873ebd53609bc3f6dc0a57f6e61ad7e3fb8cbb7f7ab8b5081cbee801b023f7c4823ee70b1c447eae050e6c7622b
   languageName: node
   linkType: hard
 

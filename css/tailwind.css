@@ -66,3 +66,27 @@ input:-webkit-autofill:focus {
 .dark-mode-fill {
   fill: #fff; /* Dark mode fill color */
 }
+
+.status-indicator {
+  position: absolute;
+  top: 75px;
+  right: 0;
+  > div {
+    inset: -1px;
+  }
+}
+.custom-widgets {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+.spotify-widget,
+.steam-widget {
+  flex: 0 0 auto;
+  max-width: fit-content;
+}
+
+.spotify-widget .now-playing {
+  max-width: fit-content;
+}

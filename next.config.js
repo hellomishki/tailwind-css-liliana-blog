@@ -7,7 +7,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app *.cloudflareinsights.com script.js;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app *.cloudflareinsights.com script.js va.vercel-scripts.com debug.js;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src *.s3.amazonaws.com;
@@ -71,7 +71,16 @@ module.exports = () => {
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
+    env: {
+      SPOTIFY_REDIRECT_URI: process.env.SPOTIFY_REDIRECT_URI,
+    },
     images: {
+      domains: [
+        'shared.akamai.steamstatic.com',
+        'avatars.steamstatic.com',
+        'steamcdn-a.akamaihd.net',
+        'i.scdn.co',
+      ],
       remotePatterns: [
         {
           protocol: 'https',

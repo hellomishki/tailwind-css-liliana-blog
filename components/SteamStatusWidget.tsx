@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
+import { useSSEData } from '@/hooks/useSSEData'
 
 interface GameInfo {
   name: string
@@ -83,68 +84,21 @@ const formatLastPlayedDate = (timestamp: number): string => {
 }
 
 const SteamStatusWidget: React.FC = () => {
-  const [steamData, setSteamData] = useState<SteamData | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const {
+    data: steamData,
+    loading,
+    connectionStatus,
+    lastUpdated,
+  } = useSSEData<SteamData>({
+    url: 'https://blog.lilianasummers.com/api/steam-status?sse=true',
+    initialData: null,
+  })
 
-  useEffect(() => {
-    let eventSource: EventSource | null = null
-
-    const setupEventSource = () => {
-      eventSource = new EventSource('https://blog.lilianasummers.com/api/steam-status?sse=true')
-
-      eventSource.onmessage = (event) => {
-        console.log('Received SSE update:', event.data)
-        try {
-          const data = JSON.parse(event.data)
-          if (data.error) {
-            setError(data.error)
-            console.error('Error in SSE update:', data)
-          } else {
-            setSteamData(data)
-            setLastUpdated(new Date())
-            setLoading(false)
-            setError(null)
-          }
-        } catch (error) {
-          console.error('Error parsing SSE data:', error)
-          setError('Error parsing server data')
-        }
-      }
-
-      eventSource.onerror = (error) => {
-        console.error('EventSource error:', error)
-        setError('Error in real-time updates. Reconnecting...')
-        eventSource?.close()
-        setTimeout(setupEventSource, 5000) // Try to reconnect after 5 seconds
-      }
-    }
-
-    setupEventSource()
-
-    return () => {
-      eventSource?.close()
-    }
-  }, [])
-
-  useEffect(() => {
-    // Update "time since last update" every minute
-    const intervalId = setInterval(() => {
-      setLastUpdated((prevLastUpdated) => (prevLastUpdated ? new Date(prevLastUpdated) : null))
-    }, 60 * 1000)
-
-    return () => clearInterval(intervalId)
-  }, [])
-
-  if (loading)
+  if (loading) {
     return (
       <div className="animate-pulse rounded-lg bg-gray-200 p-4 dark:bg-gray-700">Loading...</div>
     )
-
-  if (error) return <div className="rounded-lg bg-red-100 p-4 dark:bg-red-900">Error: {error}</div>
-
-  if (!steamData) return null
+  }
 
   const renderGameInfo = (game: GameInfo | null, isCurrent: boolean) => {
     if (!game) return null
@@ -181,29 +135,38 @@ const SteamStatusWidget: React.FC = () => {
         <SocialIcon kind="steam" href={siteMetadata.steam} />
         <span className="ml-2">Status</span>
       </h3>
-      <div className="flex items-start">
-        <div className="relative mr-5">
-          <p className="mb-1 text-center font-medium">{steamData.personaname}</p>
-          <Image
-            src={steamData.avatarfull}
-            alt={steamData.personaname}
-            width={64}
-            height={64}
-            className="mb-1 rounded-full"
-          />
-          <StatusIndicator state={steamData.personastate} />
-          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-            {personaStates[steamData.personastate]}
-          </p>
+      {steamData && (
+        <div className="flex items-start">
+          <div className="relative mr-5">
+            <p className="mb-1 text-center font-medium">{steamData.personaname}</p>
+            <Image
+              src={steamData.avatarfull}
+              alt={steamData.personaname}
+              width={64}
+              height={64}
+              className="mb-1 rounded-full"
+            />
+            <StatusIndicator state={steamData.personastate} />
+            <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+              {personaStates[steamData.personastate]}
+            </p>
+          </div>
+          <div>
+            {renderGameInfo(steamData.currentGame, true)}
+            {!steamData.currentGame && renderGameInfo(steamData.recentGame, false)}
+          </div>
         </div>
-        <div>
-          {renderGameInfo(steamData.currentGame, true)}
-          {!steamData.currentGame && renderGameInfo(steamData.recentGame, false)}
-        </div>
+      )}
+      <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+        <span>
+          Last updated: {lastUpdated ? formatLastPlayedDate(lastUpdated.getTime() / 1000) : 'N/A'}
+        </span>
+        <span
+          className={`flex items-center ${connectionStatus === 'reconnecting' ? 'animate-pulse text-yellow-500' : 'text-green-500'}`}
+        >
+          {connectionStatus === 'connected' ? '● Connected' : '● Reconnecting...'}
+        </span>
       </div>
-      <p className="mt-4 text-right text-xs text-gray-500">
-        Last updated: {lastUpdated ? formatLastPlayedDate(lastUpdated.getTime() / 1000) : 'N/A'}
-      </p>
     </div>
   )
 }

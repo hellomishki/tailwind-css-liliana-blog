@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 interface SSEOptions<T> {
   url: string
@@ -19,10 +19,17 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
     'reconnecting'
   )
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const setupEventSource = useCallback(() => {
     console.log('Setting up EventSource')
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+    }
+
     const eventSource = new EventSource(url)
+    eventSourceRef.current = eventSource
 
     eventSource.onopen = () => {
       console.log('EventSource connection opened')
@@ -43,7 +50,6 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
         setConnectionStatus('connected')
       } catch (error) {
         console.error('Error parsing SSE data:', error)
-        setConnectionStatus('error')
       }
     }
 
@@ -51,48 +57,37 @@ export function useSSEData<T>({ url, initialData }: SSEOptions<T>): SSEHookResul
       console.error('EventSource error:', error)
       setConnectionStatus('error')
       eventSource.close()
+      // Use the reconnect function from the outer scope
+      reconnect()
     }
 
     return eventSource
-  }, [url])
+  }, [url]) // Remove reconnect from dependencies
+
+  const reconnect = useCallback(() => {
+    console.log('Attempting to reconnect...')
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current)
+    }
+    reconnectTimeoutRef.current = setTimeout(() => {
+      setConnectionStatus('reconnecting')
+      setupEventSource()
+    }, 5000)
+  }, [setupEventSource]) // Add setupEventSource as a dependency
 
   useEffect(() => {
-    let eventSource: EventSource | null = null
-
-    const connect = () => {
-      if (eventSource) {
-        eventSource.close()
-      }
-      setConnectionStatus('reconnecting')
-      eventSource = setupEventSource()
-    }
-
-    connect()
+    const eventSource = setupEventSource()
 
     return () => {
-      if (eventSource) {
-        console.log('Closing EventSource connection')
-        eventSource.close()
+      console.log('Cleaning up EventSource')
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close()
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current)
       }
     }
   }, [setupEventSource])
-
-  useEffect(() => {
-    let retryTimeout: NodeJS.Timeout | null = null
-
-    if (connectionStatus === 'error') {
-      console.log('Connection error, retrying in 5 seconds')
-      retryTimeout = setTimeout(() => {
-        setConnectionStatus('reconnecting')
-      }, 5000) // Retry after 5 seconds
-    }
-
-    return () => {
-      if (retryTimeout) {
-        clearTimeout(retryTimeout)
-      }
-    }
-  }, [connectionStatus])
 
   return { data, loading, connectionStatus, lastUpdated }
 }

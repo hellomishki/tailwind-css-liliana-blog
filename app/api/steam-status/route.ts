@@ -158,10 +158,11 @@ export async function GET(request: NextRequest) {
 
   if (sse === 'true') {
     const encoder = new TextEncoder()
+    let isActive = true
+
     const stream = new ReadableStream({
       async start(controller) {
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
+        while (isActive) {
           try {
             const data = await fetchSteamData()
             controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
@@ -177,11 +178,16 @@ export async function GET(request: NextRequest) {
               )
             )
           }
-          await new Promise((resolve) => setTimeout(resolve, 30000)) // Update every 30 seconds
+          // Send a ping every 15 seconds to keep the connection alive
+          await new Promise((resolve) => setTimeout(resolve, 15000))
+          controller.enqueue(encoder.encode(`data: ping\n\n`))
+          // Wait another 15 seconds before fetching data again
+          await new Promise((resolve) => setTimeout(resolve, 15000))
         }
       },
       cancel() {
         console.log('SSE connection closed')
+        isActive = false
       },
     })
 

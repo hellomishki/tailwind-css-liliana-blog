@@ -47,6 +47,7 @@ const SpotifyStatusWidget: React.FC = () => {
   const {
     data: spotifyData,
     loading,
+    connectionStatus,
     lastUpdated,
   } = useSSEData<SpotifyData>({
     url: '/api/spotify-status?sse=true',
@@ -54,17 +55,21 @@ const SpotifyStatusWidget: React.FC = () => {
   })
 
   useEffect(() => {
-    console.log('Spotify widget updated:', { spotifyData, loading, lastUpdated })
-  }, [spotifyData, loading, lastUpdated])
+    console.log('Spotify widget updated:', { spotifyData, loading, connectionStatus, lastUpdated })
+  }, [spotifyData, loading, connectionStatus, lastUpdated])
 
-  if (loading) {
+  if (loading && !spotifyData) {
     return (
       <div className="animate-pulse rounded-lg bg-gray-200 p-4 dark:bg-gray-700">Loading...</div>
     )
   }
 
   if (!spotifyData) {
-    return null
+    return (
+      <div className="rounded-lg bg-red-100 p-4 dark:bg-red-900">
+        Unable to load Spotify data. Please try again later.
+      </div>
+    )
   }
 
   return (

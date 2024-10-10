@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
@@ -93,6 +93,10 @@ const SteamStatusWidget: React.FC = () => {
     initialData: null,
   })
 
+  useEffect(() => {
+    console.log('Steam widget updated:', { steamData, loading, lastUpdated })
+  }, [steamData, loading, lastUpdated])
+
   if (loading) {
     return (
       <div className="animate-pulse rounded-lg bg-gray-200 p-4 dark:bg-gray-700">Loading...</div>
@@ -100,7 +104,7 @@ const SteamStatusWidget: React.FC = () => {
   }
 
   if (!steamData) {
-    return null // To do: return a fallback UI here
+    return null
   }
 
   const renderGameInfo = (game: GameInfo | null, isCurrent: boolean) => {

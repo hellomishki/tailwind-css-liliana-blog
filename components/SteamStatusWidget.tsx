@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import { useSSEData } from '@/hooks/useSSEData'
+import { useSSEData } from '../hooks/useSSEData'
 
 interface GameInfo {
   name: string
@@ -87,7 +87,6 @@ const SteamStatusWidget: React.FC = () => {
   const {
     data: steamData,
     loading,
-    connectionStatus,
     lastUpdated,
   } = useSSEData<SteamData>({
     url: 'https://blog.lilianasummers.com/api/steam-status?sse=true',
@@ -98,6 +97,10 @@ const SteamStatusWidget: React.FC = () => {
     return (
       <div className="animate-pulse rounded-lg bg-gray-200 p-4 dark:bg-gray-700">Loading...</div>
     )
+  }
+
+  if (!steamData) {
+    return null // To do: return a fallback UI here
   }
 
   const renderGameInfo = (game: GameInfo | null, isCurrent: boolean) => {
@@ -135,38 +138,31 @@ const SteamStatusWidget: React.FC = () => {
         <SocialIcon kind="steam" href={siteMetadata.steam} />
         <span className="ml-2">Status</span>
       </h3>
-      {steamData && (
-        <div className="flex items-start">
-          <div className="relative mr-5">
-            <p className="mb-1 text-center font-medium">{steamData.personaname}</p>
-            <Image
-              src={steamData.avatarfull}
-              alt={steamData.personaname}
-              width={64}
-              height={64}
-              className="mb-1 rounded-full"
-            />
-            <StatusIndicator state={steamData.personastate} />
-            <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-              {personaStates[steamData.personastate]}
-            </p>
-          </div>
-          <div>
-            {renderGameInfo(steamData.currentGame, true)}
-            {!steamData.currentGame && renderGameInfo(steamData.recentGame, false)}
-          </div>
+      <div className="flex items-start">
+        <div className="relative mr-5">
+          <p className="mb-1 text-center font-medium">{steamData.personaname}</p>
+          <Image
+            src={steamData.avatarfull}
+            alt={steamData.personaname}
+            width={64}
+            height={64}
+            className="mb-1 rounded-full"
+          />
+          <StatusIndicator state={steamData.personastate} />
+          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+            {personaStates[steamData.personastate]}
+          </p>
         </div>
-      )}
-      <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
-        <span>
-          Last updated: {lastUpdated ? formatLastPlayedDate(lastUpdated.getTime() / 1000) : 'N/A'}
-        </span>
-        <span
-          className={`flex items-center ${connectionStatus === 'reconnecting' ? 'animate-pulse text-yellow-500' : 'text-green-500'}`}
-        >
-          {connectionStatus === 'connected' ? '● Connected' : '● Reconnecting...'}
-        </span>
+        <div>
+          {renderGameInfo(steamData.currentGame, true)}
+          {!steamData.currentGame && renderGameInfo(steamData.recentGame, false)}
+        </div>
       </div>
+      {lastUpdated && (
+        <p className="mt-4 text-right text-xs text-gray-500">
+          Last updated: {formatLastPlayedDate(lastUpdated.getTime() / 1000)}
+        </p>
+      )}
     </div>
   )
 }

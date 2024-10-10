@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import { useSSEData } from '@/hooks/useSSEData'
+import { useSSEData } from '../hooks/useSSEData'
 
 interface SpotifyData {
   isPlaying: boolean
@@ -47,10 +47,9 @@ const SpotifyStatusWidget: React.FC = () => {
   const {
     data: spotifyData,
     loading,
-    connectionStatus,
     lastUpdated,
   } = useSSEData<SpotifyData>({
-    url: 'https://blog.lilianasummers.com/api/spotify-status?sse=true',
+    url: '/api/spotify-status?sse=true',
     initialData: null,
   })
 
@@ -60,52 +59,49 @@ const SpotifyStatusWidget: React.FC = () => {
     )
   }
 
+  if (!spotifyData) {
+    return null // To do: return a fallback UI here
+  }
+
   return (
     <div className="spotify-widget rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
       <h3 className="mb-4 inline-flex text-lg font-semibold">
         <SocialIcon kind="spotify" href={siteMetadata.spotify} />
         <span className="ml-2">Now Playing</span>
       </h3>
-      {spotifyData && (
-        <div className="now-playing flex flex-col">
-          <div className="mb-1 flex flex-col items-center">
-            <Image
-              src={spotifyData.albumArt}
-              alt={spotifyData.album}
-              width={185}
-              height={100}
-              className="rounded-md"
-            />
-          </div>
-          <div>
-            <a
-              href={spotifyData.spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-primary-500 hover:underline"
-            >
-              {spotifyData.name}
-            </a>
-            <p className="text-sm text-gray-600 dark:text-gray-300">{spotifyData.artist}</p>
-            <p className="mt-1 text-xs text-gray-500">{spotifyData.album}</p>
-            {!spotifyData.isPlaying && spotifyData.lastPlayedAt && (
-              <p className="text-xs text-gray-500">
-                Last played: {formatLastPlayedDate(spotifyData.lastPlayedAt)}
-              </p>
-            )}
-          </div>
+      <div className="now-playing flex flex-col">
+        <div className="mb-1 flex flex-col items-center">
+          <Image
+            src={spotifyData.albumArt}
+            alt={spotifyData.album}
+            width={185}
+            height={100}
+            className="rounded-md"
+          />
         </div>
-      )}
-      <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
-        <span>
-          Last updated: {lastUpdated ? formatLastPlayedDate(lastUpdated.toISOString()) : 'N/A'}
-        </span>
-        <span
-          className={`flex items-center ${connectionStatus === 'reconnecting' ? 'animate-pulse text-yellow-500' : 'text-green-500'}`}
-        >
-          {connectionStatus === 'connected' ? '● Connected' : '● Reconnecting...'}
-        </span>
+        <div>
+          <a
+            href={spotifyData.spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-primary-500 hover:underline"
+          >
+            {spotifyData.name}
+          </a>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{spotifyData.artist}</p>
+          <p className="mt-1 text-xs text-gray-500">{spotifyData.album}</p>
+          {!spotifyData.isPlaying && spotifyData.lastPlayedAt && (
+            <p className="text-xs text-gray-500">
+              Last played: {formatLastPlayedDate(spotifyData.lastPlayedAt)}
+            </p>
+          )}
+        </div>
       </div>
+      {lastUpdated && (
+        <p className="mt-4 text-right text-xs text-gray-500">
+          Last updated: {formatLastPlayedDate(lastUpdated.toISOString())}
+        </p>
+      )}
     </div>
   )
 }
